@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forever Couch Gang • Jan 1 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    html, body {
+      height:100%;
+      background:transparent !important;
+      color:#F0F4FF; font-family:'Bangers',cursive;
+      overflow:auto;
+      min-height:100vh; display:flex; flex-direction:column; align-items:center;
+      justify-content:flex-start; position:relative;
+      pointer-events:auto;
+    }
+    .nebula{
+      position:absolute;inset:0;
+      background:radial-gradient(circle at 20% 80%,#00F0FF40 0%,transparent 50%),
+                 radial-gradient(circle at 80% 20%,#FF00AA40 0%,transparent 50%);
+      animation:p 12s infinite alternate;
+      pointer-events:none;
+    }
+    @keyframes p{0%{opacity:.5}100%{opacity:.9}}
+    .container{
+      max-width:95vw;padding:2rem;text-align:center;z-index:10;
+      pointer-events:none;
+    }
+    h1, p, .num, footer {
+      background:linear-gradient(90deg,#00ff41,#ff00ff,#00ff41);
+      -webkit-background-clip:text;
+      color:transparent;
+      animation:s 6s infinite;
+      text-shadow:0 0 30px #00ff41;
+    }
+    @keyframes s{0%{background-position:0%}100%{background-position:200%}}
+    h1{font-size:clamp(3rem,10vw,8rem);letter-spacing:8px;animation:s 4s infinite,g 8s infinite;text-shadow:0 0 40px #00ff41}
+    @keyframes g{0%,100%{text-shadow:0 0 40px #00ff41}20%{text-shadow:5px 0 #ff00ff,-5px 0 #00ffff}}
+    .countdown{display:flex;justify-content:center;gap:2vw;margin:2rem 0;flex-wrap:wrap}
+    .box{background:rgba(0,255,65,.3);border:3px solid #00ff41;padding:1rem 2rem;border-radius:20px;min-width:100px;box-shadow:0 0 40px #00ff41}
+    .num{font-size:clamp(3rem,10vw,6rem);text-shadow:0 0 20px #00ff41}
+    .progress{width:90%;height:40px;background:rgba(17,17,17,.5);border:3px solid #00ff41;border-radius:20px;overflow:hidden;margin:2rem 0;box-shadow:0 0 30px #00ff41}
+    .fill{height:100%;background:linear-gradient(90deg,#00ff41,#ff00ff);width:0%;transition:width 1s ease;box-shadow:0 0 20px #00ff41}
+    .war-report{background:rgba(255,0,102,.2);padding:2rem;border:3px solid #ff00ff;border-radius:20px;margin:2rem 0;box-shadow:0 0 40px #ff00ff}
+    .merch-section{margin:3rem 0;padding:2rem;background:rgba(0,255,65,.2);border:3px solid #00ff41;border-radius:20px;text-align:center;box-shadow:0 0 30px #00ff41}
+    footer{position:fixed;bottom:1rem;width:100%;text-align:center;opacity:.9;font-size:clamp(1rem,2vw,1.4rem);pointer-events:none;}
+    .blink{background:linear-gradient(90deg,#ff00ff,#00ff41,#ff00ff);-webkit-background-clip:text;color:transparent;animation:b .8s infinite;text-shadow:0 0 30px #ff00ff}
+    @keyframes b{0%,100%{opacity:1}50%{opacity:.4}}
+    @media (max-width:768px){.countdown{flex-direction:column;gap:1rem}.box{min-width:80vw}}
+    #updating-overlay{position:fixed;inset:0;background:rgba(10,14,23,0.95);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+    @keyframes pulse {0% { text-shadow: 0 0 50px #00ff41; }100% { text-shadow: 0 0 100px #00ff41, 0 0 150px #00ff41; }}
+    @keyframes updateBlink {0%,100% { opacity:1 }50% { opacity:0.5 }}
+    .audio-player{position:fixed;top:1rem;right:1rem;z-index:100;background:rgba(0,0,0,0.6);padding:1rem;border:2px solid #00ff41;border-radius:20px;box-shadow:0 0 20px #00ff41;display:flex;flex-direction:column;gap:10px;align-items:center;width:180px;pointer-events:all;}
+    .play-pause-btn{background:#00ff41;color:#000;padding:0.5rem 1rem;border:none;border-radius:20px;cursor:pointer;font-size:1rem;box-shadow:0 0 10px #00ff41}
+    .volume-slider{-webkit-appearance:none;width:100%;height:10px;border-radius:5px;background:#333;outline:none}
+    .volume-slider::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;background:#00ff41;border-radius:50%;cursor:pointer;box-shadow:0 0 15px #00ff41}
+  </style>
+</head>
+<body>
+  <div id="updating-overlay">
+    <h1 style="font-size:clamp(4rem,15vw,12rem);letter-spacing:10px;background:linear-gradient(90deg,#00ff41,#ff00ff); -webkit-background-clip:text;color:transparent;text-shadow:0 0 50px #00ff41;animation:pulse 1.5s infinite alternate">
+      UPDATING
+    </h1>
+    <div style="width:80%;max-width:800px;height:50px;background:#111;border:4px solid #00ff41;border-radius:25px;overflow:hidden;margin-top:3rem;box-shadow:0 0 40px #00ff41">
+      <div id="update-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#00ff41,#ff00ff);transition:width 0.5s ease;box-shadow:0 0 20px #00ff41"></div>
+    </div>
+    <p style="margin-top:2rem;font-size:clamp(1.5rem,5vw,3rem);background:linear-gradient(90deg,#ff00ff,#00ff41);-webkit-background-clip:text;color:transparent;animation:updateBlink 1s infinite">WAR REPORT INCOMING...</p>
+  </div>
+  <div class="nebula"></div>
+  <audio id="song" preload="auto">
+    <source src="song.mp3" type="audio/mpeg">
+  </audio>
+  <div class="audio-player">
+    <button class="play-pause-btn" id="playPauseBtn">PLAY WAR ANTHEM</button>
+    <input type="range" id="volumeSlider" class="volume-slider" min="0" max="1" step="0.01" value="0.5">
+  </div>
+  <div class="container">
+    <h1>FOREVER COUCH GANG</h1>
+    <p style="font-size:clamp(1.2rem,4vw,2.5rem)">PROOF-OF-ROT GENESIS • JAN 1 2026</p>
+    <div class="countdown">
+      <div class="box"><div class="num" id="days">00</div><div>DAYS</div></div>
+      <div class="box"><div class="num" id="hours">00</div><div>HOURS</div></div>
+      <div class="box"><div class="num" id="mins">00</div><div>MINS</div></div>
+      <div class="box"><div class="num" id="secs">00</div><div>SECS</div></div>
+    </div>
+    <div class="progress"><div class="fill" id="fill"></div></div>
+    <p style="font-size:clamp(1.5rem,5vw,2.5rem)">68% COMPLETE • SOLO DEV GRIND</p>
+    <div class="war-report">
+      <h2 style="font-size:clamp(1.5rem,5vw,2.5rem)">WAR REPORT 3.0 – DEC 17 2025</h2>
+      <p style="font-size:clamp(1rem,3vw,1.5rem);line-height:1.4">
+        Multi-platform OAuth fortress strengthened: X • Twitch • Instagram • Facebook • YouTube • Kick wired seamless<br>
+        Glowing Garbanzo overlay system locked • Cinematic update sequence live<br>
+        Age verification + anti-bot shields upgraded • Referral engine primed<br>
+        Blockchain core humming (crypto rewards paused for legal W)<br>
+        Solo dev grind at 68% • Merch drop crushing • Community growing underground<br>
+        WE'RE BUILDING THE BRIDGE THEY CAN'T BURN
+      </p>
+    </div>
+    <div class="merch-section">
+      <h2 style="font-size:clamp(1.5rem,5vw,2.5rem)">MERCH DROP LIVE – GEAR UP FOR GENESIS</h2>
+      <p style="font-size:clamp(1rem,3vw,1.5rem)">Hoodies, tees, snapbacks, trays, lighters with deer smoke logo. $COUCH payments soon.</p>
+      <div id='collection-component-1765326571185'></div>
+    </div>
+    <p class="blink" style="font-size:clamp(2rem,6vw,3.5rem);margin:2rem">WE ARE SO FUCKING CLOSE</p>
+    <p style="font-size:clamp(1.5rem,4vw,2.5rem);text-align:center">
+      We're building our side of the bridge.<br>
+      If they burn it down — we'll build the whole damn thing.<br>
+      Forever Couch Gang forever.
+    </p>
+  </div>
+  <footer>ONE HUMAN • ONE WALLET • INFINITE ROT</footer>
+  <script>
+    // CINEMATIC DROP ON EVERY LOAD
+    const overlay = document.getElementById('updating-overlay');
+    const bar = document.getElementById('update-bar');
+    const mainContent = document.querySelector('.container');
+    const nebula = document.querySelector('.nebula');
+    const footer = document.querySelector('footer');
+
+    const triggerUpdateNow = true;
+
+    if (triggerUpdateNow) {
+      setTimeout(() => {
+        mainContent.style.transition = 'opacity 3s ease';
+        mainContent.style.opacity = '0';
+        footer.style.transition = 'opacity 3s ease';
+        footer.style.opacity = '0';
+        nebula.style.transition = 'opacity 3s ease';
+        nebula.style.opacity = '0.3';
+
+        setTimeout(() => {
+          overlay.style.display = 'flex';
+          overlay.style.opacity = '1';
+
+          let progress = 0;
+          const interval = setInterval(() => {
+            progress += 100 / 300;
+            bar.style.width = progress + '%';
+            if (progress >= 100) {
+              clearInterval(interval);
+              overlay.style.transition = 'opacity 2s ease';
+              overlay.style.opacity = '0';
+              setTimeout(() => {
+                overlay.style.display = 'none';
+                mainContent.style.opacity = '1';
+                footer.style.opacity = '0.9';
+                nebula.style.opacity = '0.9';
+              }, 2000);
+            }
+          }, 100);
+        }, 3000);
+      }, 2000);
+    }
+
+    // COUNTDOWN FIXED
+    const genesis = new Date(Date.UTC(2026, 0, 1, 5, 0, 0)).getTime(); // Jan 1 2026 00:00 EST
+    function updateTimer() {
+      const now = Date.now();
+      let distance = genesis - now;
+      if (distance < 0) {
+        document.querySelector('.countdown').innerHTML = "<h1 style='background:linear-gradient(90deg,#00ff41,#ff00ff);-webkit-background-clip:text;color:transparent;font-size:clamp(4rem,15vw,10rem)'>GENESIS IS LIVE</h1>";
+        document.getElementById('fill').style.width = '100%';
+        return;
+      }
+      const days = Math.floor(distance / 86400000);
+      const hours = Math.floor((distance % 86400000) / 3600000);
+      const mins = Math.floor((distance % 3600000) / 60000);
+      const secs = Math.floor((distance % 60000) / 1000);
+      document.getElementById('days').textContent = days.toString().padStart(2,'0');
+      document.getElementById('hours').textContent = hours.toString().padStart(2,'0');
+      document.getElementById('mins').textContent = mins.toString().padStart(2,'0');
+      document.getElementById('secs').textContent = secs.toString().padStart(2,'0');
+      const startYear = new Date(Date.UTC(2025, 0, 1, 5, 0, 0)).getTime();
+      const total = genesis - startYear;
+      const elapsed = now - startYear;
+      let percent = Math.min((elapsed / total) * 100, 100);
+      document.getElementById('fill').style.width = percent + '%';
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    // AUDIO CONTROLS
+    const song = document.getElementById('song');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+
+    playPauseBtn.addEventListener('click', () => {
+      if (song.paused) {
+        song.play();
+        playPauseBtn.textContent = 'PAUSE ANTHEM';
+      } else {
+        song.pause();
+        playPauseBtn.textContent = 'PLAY WAR ANTHEM';
+      }
+    });
+
+    volumeSlider.addEventListener('input', (e) => {
+      song.volume = e.target.value;
+    });
+
+    song.addEventListener('ended', () => {
+      playPauseBtn.textContent = 'REPLAY ANTHEM';
+    });
+
+    // SHOPIFY EMBED – FULL FIXED OPTIONS
+    (function () {
+      var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+      if (window.ShopifyBuy) {
+        if (window.ShopifyBuy.UI) {
+          ShopifyBuyInit();
+        } else {
+          loadScript();
+        }
+      } else {
+        loadScript();
+      }
+      function loadScript() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInit;
+      }
+      function ShopifyBuyInit() {
+        var client = ShopifyBuy.buildClient({
+          domain: 'csfwks-my.myshopify.com',
+          storefrontAccessToken: 'ceb8a73c9324137e9fe6152cb2accdfb',
+        });
+        ShopifyBuy.UI.onReady(client).then(function (ui) {
+          ui.createComponent('collection', {
+            id: '338523390120',
+            node: document.getElementById('collection-component-1765326571185'),
+            moneyFormat: '%24%7B%7Bamount%7D%7D',
+            options: {
+              "product": {
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "calc(25% - 20px)",
+                      "margin-left": "20px",
+                      "margin-bottom": "50px",
+                      "width": "calc(25% - 20px)"
+                    },
+                    "img": {
+                      "height": "calc(100% - 15px)",
+                      "position": "absolute",
+                      "left": "0",
+                      "right": "0",
+                      "top": "0"
+                    },
+                    "imgWrapper": {
+                      "padding-top": "calc(75% + 15px)",
+                      "position": "relative",
+                      "height": "0"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Geneva, sans-serif",
+                    "font-size": "16px",
+                    "padding-top": "16px",
+                    "padding-bottom": "16px",
+                    "color": "#00eefd",
+                    ":hover": {
+                      "color": "#00eefd",
+                      "background-color": "#6314c5"
+                    },
+                    "background-color": "#6e16db",
+                    ":focus": {
+                      "background-color": "#6314c5"
+                    },
+                    "border-radius": "40px",
+                    "padding-left": "26px",
+                    "padding-right": "26px"
+                  },
+                  "quantityInput": {
+                    "font-size": "16px",
+                    "padding-top": "16px",
+                    "padding-bottom": "16px"
+                  }
+                },
+                "text": {
+                  "button": "Add to cart"
+                }
+              },
+              "productSet": {
+                "styles": {
+                  "products": {
+                    "@media (min-width: 601px)": {
+                      "margin-left": "-20px"
+                    }
+                  }
+                }
+              },
+              "modalProduct": {
+                "contents": {
+                  "img": false,
+                  "imgWithCarousel": true,
+                  "button": false,
+                  "buttonWithQuantity": true
+                },
+                "styles": {
+                  "product": {
+                    "@media (min-width: 601px)": {
+                      "max-width": "100%",
+                      "margin-left": "0px",
+                      "margin-bottom": "0px"
+                    }
+                  },
+                  "button": {
+                    "font-family": "Geneva, sans-serif",
+                    "font-size": "16px",
+                    "padding-top": "16px",
+                    "padding-bottom": "16px",
+                    "color": "#00eefd",
+                    ":hover": {
+                      "color": "#00eefd",
+                      "background-color": "#6314c5"
+                    },
+                    "background-color": "#6e16db",
+                    ":focus": {
+                      "background-color": "#6314c5"
+                    },
+                    "border-radius": "40px",
+                    "padding-left": "26px",
+                    "padding-right": "26px"
+                  },
+                  "quantityInput": {
+                    "font-size": "16px",
+                    "padding-top": "16px",
+                    "padding-bottom": "16px"
+                  }
+                },
+                "text": {
+                  "button": "Add to cart"
+                }
+              },
+              "option": {},
+              "cart": {
+                "styles": {
+                  "button": {
+                    "font-family": "Geneva, sans-serif",
+                    "font-size": "16px",
+                    "padding-top": "16px",
+                    "padding-bottom": "16px",
+                    "color": "#00eefd",
+                    ":hover": {
+                      "color": "#00eefd",
+                      "background-color": "#6314c5"
+                    },
+                    "background-color": "#6e16db",
+                    ":focus": {
+                      "background-color": "#6314c5"
+                    },
+                    "border-radius": "40px"
+                  }
+                },
+                "text": {
+                  "total": "Subtotal",
+                  "button": "Checkout"
+                }
+              },
+              "toggle": {
+                "styles": {
+                  "toggle": {
+                    "font-family": "Geneva, sans-serif",
+                    "background-color": "#6e16db",
+                    ":hover": {
+                      "background-color": "#6314c5"
+                    },
+                    ":focus": {
+                      "background-color": "#6314c5"
+                    }
+                  },
+                  "count": {
+                    "font-size": "16px",
+                    "color": "#00eefd",
+                    ":hover": {
+                      "color": "#00eefd"
+                    }
+                  },
+                  "iconPath": {
+                    "fill": "#00eefd"
+                  }
+                }
+              }
+            }
+          });
+        });
+      }
+    })();
+
+    // AUTOSCROLL
+    function autoScroll() {
+      const scrollSpeed = 35;
+      const pauseAtBottom = 5000;
+      const pauseAtTop = 3000;
+      let scrollingDown = true;
+      function scrollStep() {
+        if (scrollingDown) {
+          window.scrollBy(0, scrollSpeed);
+          if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 10) {
+            scrollingDown = false;
+            setTimeout(() => { scrollingDown = true; }, pauseAtBottom);
+          }
+        } else {
+          window.scrollBy(0, -scrollSpeed);
+          if (window.scrollY <= 10) {
+            scrollingDown = true;
+            setTimeout(() => { scrollingDown = false; }, pauseAtTop);
+          }
+        }
+        requestAnimationFrame(scrollStep);
+      }
+      scrollStep();
+    }
+    window.addEventListener('load', autoScroll);
+  </script>
+</body>
+</html>
