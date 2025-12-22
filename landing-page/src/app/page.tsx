@@ -265,40 +265,121 @@ export default function Home() {
       <script
         dangerouslySetInnerHTML={{
           __html: `
-            // Countdown Timer
-            const genesis = new Date(Date.UTC(2026, 0, 1, 5, 0, 0)).getTime();
-            function updateTimer() {
-              const now = Date.now();
-              let distance = genesis - now;
-              if (distance < 0) {
-                document.querySelector('.countdown')?.innerHTML = "<h1 style='background:linear-gradient(90deg,#00ff41,#ff00ff);-webkit-background-clip:text;color:transparent;font-size:clamp(4rem,15vw,10rem)'>GENESIS IS LIVE</h1>";
-                document.getElementById('fill').style.width = '100%';
-                return;
-              }
-              const days = Math.floor(distance / 86400000);
-              const hours = Math.floor((distance % 86400000) / 3600000);
-              const mins = Math.floor((distance % 3600000) / 60000);
-              const secs = Math.floor((distance % 60000) / 1000);
-              document.getElementById('days').textContent = days.toString().padStart(2, '0');
-              document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
-              document.getElementById('mins').textContent = mins.toString().padStart(2, '0');
-              document.getElementById('secs').textContent = secs.toString().padStart(2, '0');
+            (function(){
+              // Robust Countdown Timer + Progress Fill
+              const genesis = new Date(Date.UTC(2026, 0, 1, 5, 0, 0)).getTime();
               const startYear = new Date(Date.UTC(2025, 0, 1, 5, 0, 0)).getTime();
-              const total = genesis - startYear;
-              const elapsed = now - startYear;
-              let percent = Math.min((elapsed / total) * 100, 100);
-              document.getElementById('fill').style.width = percent + '%';
-            }
-            setInterval(updateTimer, 1000);
-            updateTimer();
 
-            // Dev Access Shortcut
-            document.addEventListener('keydown', (e) => {
-              if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-                e.preventDefault();
-                window.location.href = '/dev';
+              function updateTimer() {
+                try {
+                  const now = Date.now();
+                  const distance = genesis - now;
+
+                  const daysEl = document.getElementById('days');
+                  const hoursEl = document.getElementById('hours');
+                  const minsEl = document.getElementById('mins');
+                  const secsEl = document.getElementById('secs');
+                  const fillEl = document.getElementById('fill');
+
+                  if (!daysEl || !hoursEl || !minsEl || !secsEl || !fillEl) {
+                    return; // DOM not ready yet
+                  }
+
+                  if (distance < 0) {
+                    const countdownArea = document.querySelector('.countdown');
+                    if (countdownArea) {
+                      countdownArea.innerHTML = "<h1 style='background:linear-gradient(90deg,#00ff41,#ff00ff);-webkit-background-clip:text;color:transparent;font-size:clamp(4rem,15vw,10rem)'>GENESIS IS LIVE</h1>";
+                    }
+                    fillEl.style.width = '100%';
+                    return;
+                  }
+
+                  const days = Math.floor(distance / 86400000);
+                  const hours = Math.floor((distance % 86400000) / 3600000);
+                  const mins = Math.floor((distance % 3600000) / 60000);
+                  const secs = Math.floor((distance % 60000) / 1000);
+
+                  daysEl.textContent = days.toString().padStart(2, '0');
+                  hoursEl.textContent = hours.toString().padStart(2, '0');
+                  minsEl.textContent = mins.toString().padStart(2, '0');
+                  secsEl.textContent = secs.toString().padStart(2, '0');
+
+                  const total = genesis - startYear;
+                  const elapsed = now - startYear;
+                  const percent = Math.min((elapsed / total) * 100, 100);
+                  fillEl.style.width = percent + '%';
+                } catch (err) {
+                  console.error('updateTimer error', err);
+                }
               }
-            });
+
+              // Start timer once DOM is ready
+              function startTimerWhenReady(){
+                updateTimer();
+                setInterval(updateTimer, 1000);
+              }
+
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startTimerWhenReady);
+              } else {
+                startTimerWhenReady();
+              }
+
+              // Dev Access Shortcut
+              document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                  e.preventDefault();
+                  window.location.href = '/dev';
+                }
+              });
+
+              // Shopify embed: initialize only if the merch container exists
+              function initShopifyIfNeeded(){
+                const node = document.getElementById('collection-component-1765326571185');
+                if (!node) return;
+
+                const scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
+                function loadScript(cb){
+                  const s = document.createElement('script');
+                  s.async = true;
+                  s.src = scriptURL;
+                  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(s);
+                  s.onload = cb;
+                }
+
+                function ShopifyBuyInit(){
+                  try{
+                    var client = ShopifyBuy.buildClient({
+                      domain: 'csfwks-my.myshopify.com',
+                      storefrontAccessToken: 'ceb8a73c9324137e9fe6152cb2accdfb',
+                    });
+                    ShopifyBuy.UI.onReady(client).then(function (ui) {
+                      ui.createComponent('collection', {
+                        id: '338523390120',
+                        node: node,
+                        moneyFormat: '%24%7B%7Bamount%7D%7D'
+                      });
+                    });
+                  }catch(e){console.error('Shopify init error', e);}
+                }
+
+                if (window.ShopifyBuy) {
+                  if (window.ShopifyBuy.UI) {
+                    ShopifyBuyInit();
+                  } else {
+                    loadScript(ShopifyBuyInit);
+                  }
+                } else {
+                  loadScript(ShopifyBuyInit);
+                }
+              }
+
+              if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initShopifyIfNeeded);
+              } else {
+                initShopifyIfNeeded();
+              }
+            })();
           `
         }}
       />
