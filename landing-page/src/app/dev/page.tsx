@@ -12,11 +12,23 @@ export default function DevPage() {
     const devToken = localStorage.getItem('fcg_dev_access');
     if (devToken === 'forevercouchgang2026') {
       setIsAuthenticated(true);
+      return;
+    }
+
+    // also accept cookie set by middleware when using basic auth
+    const cookieMatch = document.cookie.split('; ').find((row) => row.startsWith('fcg_dev_access='));
+    if (cookieMatch) {
+      const val = cookieMatch.split('=')[1];
+      if (val === 'forevercouchgang2026') {
+        setIsAuthenticated(true);
+        return;
+      }
     }
   }, []);
 
   const handleAuth = () => {
-    if (password === 'forevercouchgang2026') {
+    // accept both the long token and the short code 'forevercouch'
+    if (password === 'forevercouchgang2026' || password === 'forevercouch') {
       localStorage.setItem('fcg_dev_access', 'forevercouchgang2026');
       setIsAuthenticated(true);
       setError('');

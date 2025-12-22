@@ -15,7 +15,10 @@ export function middleware(request: NextRequest) {
     const authValue = basicAuth.split(' ')[1];
     const [user, pwd] = Buffer.from(authValue, 'base64').toString().split(':');
     if (user === 'admin' && pwd === 'forevercouch') {
-      return NextResponse.next();
+      const res = NextResponse.next();
+      // set a cookie readable by client-side code so the /dev page recognizes auth
+      res.cookies.set('fcg_dev_access', 'forevercouchgang2026', { path: '/' });
+      return res;
     }
   }
 
